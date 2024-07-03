@@ -69,12 +69,21 @@ export default function Home() {
     </div>
   );
   return (
-    <ChatWindow
-      endpoint="api/chat"
-      emoji="🏴‍☠️"
-      titleText="Patchy the Chatty Pirate"
-      placeholder="I'm an LLM pretending to be a pirate! Ask me about the pirate life!"
-      emptyStateComponent={InfoCard}
-    ></ChatWindow>
+    <main className="flex min-h-full flex-col items-center justify-between">
+      {/* <GoogleAnalytics gaId="G-WMHLC4N3R2" /> */}
+      <Navbar />
+      <Hero />
+      <Services />
+      <Promise />
+      <Talk />
+      <Footer />
+      <ChatWindow
+        endpoint="api/chat"
+        emoji="🏴‍☠️"
+        titleText="Patchy the Chatty Pirate"
+        placeholder="I'm an LLM pretending to be a pirate! Ask me about the pirate life!"
+        emptyStateComponent={InfoCard}
+      />
+    </main>
   );
 }
