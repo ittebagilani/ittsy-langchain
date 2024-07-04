@@ -90,12 +90,12 @@ export default function AgentsPage() {
     <ChatWindow
       endpoint="api/chat/retrieval_agents"
       emptyStateComponent={InfoCard}
-      showIngestForm={true}
-      showIntermediateStepsToggle={true}
+      // showIngestForm={true}
+      // showIntermediateStepsToggle={true}
       placeholder={
         'Beep boop! I\'m a robot retrieval-focused agent! Ask, "What are some ways of doing retrieval in LangChain.js?"'
       }
-      emoji="🤖"
+      // emoji="🤖"
       titleText="Robbie the Retrieval Robot"
     />
   );

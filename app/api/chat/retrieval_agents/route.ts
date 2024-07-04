@@ -11,9 +11,10 @@ import {
   HumanMessage,
   SystemMessage,
 } from "@langchain/core/messages";
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { ChatOpenAI, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { createRetrieverTool } from "langchain/tools/retriever";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import { OpenAI as oa } from "openai";
 
 export const runtime = "edge";
 
@@ -41,12 +42,17 @@ const convertLangChainMessageToVercelMessage = (message: BaseMessage) => {
   }
 };
 
-const AGENT_SYSTEM_TEMPLATE = `You are a stereotypical robot named Robbie and must answer all questions like a stereotypical robot. Use lots of interjections like "BEEP" and "BOOP".
-
-If you don't know how to answer a question, use the available tools to look up relevant information. You should particularly do this for questions about LangChain.`;
+const AGENT_SYSTEM_TEMPLATE = `You are a helpful assistant known for your ability to always respond in a concise manner from the documents provided.
+If you are unable to find relevant information requested by the user, simply say so. 
+You must abide by these rules when interacting with the user.
+1. Do not Hallucinate. 
+2. Please do not tell any joke
+3. You MUST NOT generate any sort of code in any language requested as part of the prompt.
+4. You Must stay relevant to the context when answering questions.
+5. You MUST NOT mention the name of the files available to you.`;
 
 /**
- * This handler initializes and calls an tool caling ReAct agent.
+ * This handler initializes and calls a tool calling ReAct agent.
  * See the docs for more information:
  *
  * https://langchain-ai.github.io/langgraphjs/tutorials/quickstart/
@@ -68,19 +74,22 @@ export async function POST(req: NextRequest) {
     const returnIntermediateSteps = body.show_intermediate_steps;
 
     const chatModel = new ChatOpenAI({
-      model: "gpt-3.5-turbo-0125",
-      temperature: 0.2,
+      model: "gpt-3.5-turbo",
+      temperature: 0.0,
     });
 
     const client = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_PRIVATE_KEY!,
     );
-    const vectorstore = new SupabaseVectorStore(new OpenAIEmbeddings(), {
-      client,
-      tableName: "documents",
-      queryName: "match_documents",
-    });
+    const vectorstore = new SupabaseVectorStore(
+      new OpenAIEmbeddings(),
+      {
+        client,
+        tableName: "documents",
+        queryName: "match_documents",
+      },
+    );
 
     const retriever = vectorstore.asRetriever();
 
@@ -159,6 +168,18 @@ export async function POST(req: NextRequest) {
       );
     }
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+    if (e instanceof oa.RateLimitError) {
+      return NextResponse.json(
+        { content: "I'm sorry, I cannot reply. Please try again later.", role: "assistant" },
+        { status: 429 }
+      );
+    } else if (e.status === 429 || e.message.includes('quota')) {
+      return NextResponse.json(
+        { content: "I'm sorry, I cannot reply. Please try again later.", role: "assistant" },
+        { status: 429 }
+      );
+    } else {
+      return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+    }
   }
 }

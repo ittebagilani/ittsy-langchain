@@ -14,7 +14,7 @@ import { IntermediateStep } from "./IntermediateStep";
 
 export function ChatWindow(props: {
   endpoint: string,
-  emptyStateComponent: ReactElement,
+  // emptyStateComponent: ReactElement,
   placeholder?: string,
   titleText?: string,
   emoji?: string;
@@ -23,7 +23,7 @@ export function ChatWindow(props: {
 }) {
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const { endpoint, emptyStateComponent, placeholder, titleText = "An LLM", showIngestForm, showIntermediateStepsToggle, emoji } = props;
+  const { endpoint, placeholder, titleText = "An LLM", showIngestForm, showIntermediateStepsToggle, emoji } = props;
 
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(false);
   const [intermediateStepsLoading, setIntermediateStepsLoading] = useState(false);
@@ -132,7 +132,7 @@ export function ChatWindow(props: {
   return (
     <div className={`flex flex-col items-center p-4 md:p-8 rounded grow overflow-hidden ${(messages.length > 0 ? "border" : "")}`}>
       <h2 className={`${messages.length > 0 ? "" : "hidden"} text-2xl`}>{emoji} {titleText}</h2>
-      {messages.length === 0 ? emptyStateComponent : ""}
+      {/* {messages.length === 0 ? emptyStateComponent : ""} */}
       <div
         className="flex flex-col-reverse w-full mb-4 overflow-auto transition-[flex-grow] ease-in-out"
         ref={messageContainerRef}
@@ -157,7 +157,7 @@ export function ChatWindow(props: {
         </div>
         <div className="flex w-full mt-4">
           <input
-            className="grow mr-8 p-4 rounded"
+            className="grow mr-8 p-4 rounded text-white"
             value={input}
             placeholder={placeholder ?? "What's it like to be a pirate?"}
             onChange={handleInputChange}
