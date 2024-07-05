@@ -168,18 +168,13 @@ export async function POST(req: NextRequest) {
       );
     }
   } catch (e: any) {
-    if (e instanceof oa.RateLimitError) {
+    if (e instanceof oa.RateLimitError || e.status === 429 || e.message.includes('quota') || !process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { content: "I'm sorry, I cannot reply. Please try again later.", role: "assistant" },
-        { status: 429 }
-      );
-    } else if (e.status === 429 || e.message.includes('quota')) {
-      return NextResponse.json(
-        { content: "I'm sorry, I cannot reply. Please try again later.", role: "assistant" },
+        { content: "I cannot help you right now", role: "system" },
         { status: 429 }
       );
     } else {
-      return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+      return NextResponse.json({ content: "I cannot help you right now", role: "system" }, { status: 500 });
     }
   }
 }
