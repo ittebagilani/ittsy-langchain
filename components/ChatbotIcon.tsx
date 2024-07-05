@@ -39,7 +39,7 @@ const ChatbotIcon = () => {
             <ChatWindow
               endpoint="api/chat/retrieval_agents"
               titleText=""
-              placeholder="How can I help you?"
+              placeholder="How can I help?"
             //   emptyStateComponent={InfoCard}
               showIngestForm={false} // Ensure the upload form is visible
             />
