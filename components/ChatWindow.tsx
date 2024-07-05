@@ -222,7 +222,7 @@ export function ChatWindow({
         <div className="flex">{intermediateStepsToggle}</div>
         <div className="flex w-full mt-4">
           <textarea
-            className="px-2 py-4 rounded text-white resize-none overflow-hidden h-12 flex-grow"
+            className="px-2 py-6 rounded text-white resize-none overflow-hidden h-12 flex-grow"
             value={input}
             placeholder={placeholder ?? "What services does Ittsy offer?"}
             onChange={handleTextareaChange}
@@ -230,7 +230,7 @@ export function ChatWindow({
           />
           <button
             type="submit"
-            className="shrink-0 py-4 bg-[#122f2d] rounded w-fit px-10"
+            className="shrink-0 py-4 bg-[#122f2d] rounded w-fit md:px-10 px-4"
           >
             <div
               role="status"
