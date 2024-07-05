@@ -221,12 +221,11 @@ export function ChatWindow({
       <form onSubmit={sendMessage} className="flex flex-col w-full mt-auto">
         <div className="flex">{intermediateStepsToggle}</div>
         <div className="flex w-full mt-4">
-          <textarea
+          <input
             className="px-2 md:py-3 mr-2 py-4 rounded text-white resize-none overflow-hidden h-12 flex-grow"
             value={input}
             placeholder={placeholder ?? "What services does Ittsy offer?"}
-            onChange={handleTextareaChange}
-            rows={1}
+            onChange={handleInputChange}
           />
           <button
             type="submit"
