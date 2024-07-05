@@ -28,9 +28,9 @@ const ChatbotIcon = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed bottom-20 right-4 md:w-[25%] h-[70%] w-[70%] bg-[#fcf0d5] shadow-2xl rounded-lg flex flex-col z-50">
+        <div className="fixed bottom-20 right-4 md:w-[25%] h-[70%] w-[70%] bg-[#122f2d] shadow-2xl rounded-lg flex flex-col z-50">
           <div className="flex justify-between items-center p-1 border-b border-gray-300">
-            <h2 className="text-lg font-bold text-[#0c1f1e]">Ittsy Agent</h2>
+            <h2 className="text-2xl font-normal ml-2 text-[#fcf0d5]">Ittsy Agent</h2>
             <button className="text-gray-500" onClick={handleToggle}>
               ✕
             </button>
