@@ -10,6 +10,7 @@ import { useChat } from "ai/react";
 import { ChatMessageBubble } from "@/components/ChatMessageBubble";
 import { UploadDocumentsForm } from "@/components/UploadDocumentsForm";
 import { IntermediateStep } from "./IntermediateStep";
+import Image from "next/image";
 
 const SESSION_STORAGE_KEY = "chatMessages";
 
@@ -220,22 +221,23 @@ export function ChatWindow({
 
       <form onSubmit={sendMessage} className="flex flex-col w-full mt-auto">
         <div className="flex">{intermediateStepsToggle}</div>
-        <div className="flex w-full mt-4">
+        <div className="flex w-full mt-4 ">
           <input
-            className="px-2 md:py-3 mr-2 py-4 rounded text-white resize-none overflow-hidden h-12 flex-grow"
+            className="px-2 md:py-3 mr-2 py-4 rounded text-black resize-none overflow-hidden h-12 flex-grow bg-transparent "
             value={input}
             placeholder={placeholder ?? "What services does Ittsy offer?"}
             onChange={handleInputChange}
+            autoFocus
           />
           <button
             type="submit"
-            className="shrink-0 py-2 bg-[#122f2d] rounded w-fit md:px-10 px-4"
+            className="shrink-0 py-2 bg-[#e8e3c5] rounded w-fit md:px-4 px-4"
           >
             <div
               role="status"
               className={`${
                 chatEndpointIsLoading || intermediateStepsLoading ? "" : "hidden"
-              } flex justify-center w-fit px-2`}
+              } flex justify-center w-fit`}
             >
               <svg
                 aria-hidden="true"
@@ -259,7 +261,7 @@ export function ChatWindow({
                 chatEndpointIsLoading || intermediateStepsLoading ? "hidden" : ""
               }`}
             >
-              Send
+              <Image src="/send.png" alt="send button" width={20} height={20} className="text-white"/>
             </div>
           </button>
         </div>
