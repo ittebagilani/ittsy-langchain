@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+'use client';
+
+import { useEffect, useState, useRef, FormEvent } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { Message } from "ai";
 import { useChat } from "ai/react";
-import { useRef } from "react";
-import type { FormEvent } from "react";
 
 import { ChatMessageBubble } from "@/components/ChatMessageBubble";
 import { UploadDocumentsForm } from "@/components/UploadDocumentsForm";
@@ -13,33 +13,31 @@ import { IntermediateStep } from "./IntermediateStep";
 
 const SESSION_STORAGE_KEY = "chatMessages";
 
-export function ChatWindow(props: {
+interface ChatWindowProps {
   endpoint: string;
   placeholder?: string;
   titleText?: string;
   emoji?: string;
   showIngestForm?: boolean;
   showIntermediateStepsToggle?: boolean;
-}) {
+}
+
+export function ChatWindow({
+  endpoint,
+  placeholder,
+  titleText = "An LLM",
+  emoji,
+  showIngestForm,
+  showIntermediateStepsToggle,
+}: ChatWindowProps) {
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
-
-  const {
-    endpoint,
-    placeholder,
-    titleText = "An LLM",
-    showIngestForm,
-    showIntermediateStepsToggle,
-    emoji,
-  } = props;
 
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(false);
   const [intermediateStepsLoading, setIntermediateStepsLoading] =
     useState(false);
-  const ingestForm = showIngestForm && (
-    <UploadDocumentsForm></UploadDocumentsForm>
-  );
-  const intemediateStepsToggle = showIntermediateStepsToggle && (
+  const ingestForm = showIngestForm && <UploadDocumentsForm />;
+  const intermediateStepsToggle = showIntermediateStepsToggle && (
     <div>
       <input
         type="checkbox"
@@ -47,14 +45,12 @@ export function ChatWindow(props: {
         name="show_intermediate_steps"
         checked={showIntermediateSteps}
         onChange={(e) => setShowIntermediateSteps(e.target.checked)}
-      ></input>
+      />
       <label htmlFor="show_intermediate_steps"> Show intermediate steps</label>
     </div>
   );
 
-  const [sourcesForMessages, setSourcesForMessages] = useState<
-    Record<string, any>
-  >({});
+  const [sourcesForMessages, setSourcesForMessages] = useState<Record<string, any>>({});
 
   const {
     messages,
@@ -105,12 +101,11 @@ export function ChatWindow(props: {
     if (messageContainerRef.current) {
       messageContainerRef.current.classList.add("grow");
     }
-    if (chatEndpointIsLoading ?? intermediateStepsLoading) {
+    if (chatEndpointIsLoading || intermediateStepsLoading) {
       return;
     }
     if (!showIntermediateSteps) {
       handleSubmit(e);
-      // Some extra work to show intermediate steps properly
     } else {
       setIntermediateStepsLoading(true);
       setInput("");
@@ -131,8 +126,6 @@ export function ChatWindow(props: {
       setIntermediateStepsLoading(false);
       if (response.status === 200) {
         const responseMessages: Message[] = json.messages;
-        // Represent intermediate steps as system messages for display purposes
-        // TODO: Add proper support for tool messages
         const toolCallMessages = responseMessages.filter(
           (responseMessage: Message) => {
             return (
@@ -140,7 +133,7 @@ export function ChatWindow(props: {
                 !!responseMessage.tool_calls?.length) ||
               responseMessage.role === "tool"
             );
-          },
+          }
         );
         const intermediateStepMessages = [];
         for (let i = 0; i < toolCallMessages.length; i += 2) {
@@ -160,7 +153,7 @@ export function ChatWindow(props: {
           newMessages.push(message);
           setMessages([...newMessages]);
           await new Promise((resolve) =>
-            setTimeout(resolve, 1000 + Math.random() * 1000),
+            setTimeout(resolve, 1000 + Math.random() * 1000)
           );
         }
         setMessages([
@@ -225,7 +218,7 @@ export function ChatWindow(props: {
       {messages.length === 0 && ingestForm}
 
       <form onSubmit={sendMessage} className="flex flex-col w-full mt-auto">
-        <div className="flex">{intemediateStepsToggle}</div>
+        <div className="flex">{intermediateStepsToggle}</div>
         <div className="flex w-full mt-4">
           <input
             className="ml-1 mr-2 px-2 py-4 rounded text-white"
@@ -240,34 +233,14 @@ export function ChatWindow(props: {
             <div
               role="status"
               className={`${
-                chatEndpointIsLoading || intermediateStepsLoading
-                  ? ""
-                  : ""
+                chatEndpointIsLoading || intermediateStepsLoading ? "" : ""
               } flex justify-center text-white`}
             >
-              {/* <svg
-                aria-hidden="true"
-                className="w-6 h-6 text-white animate-spin dark:text-white fill-sky-800"
-                viewBox="0 0 100 101"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                  fill="currentColor"
-                />
-                <path
-                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2763 28.8227 92.871 24.3691 89.899 20.348C85.8854 15.1192 80.8826 10.7238 75.2124 7.55301C69.5422 4.38221 63.3062 2.54242 56.848 2.12929C51.5133 1.74559 46.143 2.75996 41.1942 5.09938C39.3818 5.96021 38.8131 8.36666 39.4501 10.7921C40.0873 13.2176 42.5694 14.6406 45.0505 14.276C48.8511 13.7175 52.7191 13.6958 56.5402 14.2181C61.8642 14.9456 66.9928 16.7147 71.6331 19.4243C76.2735 22.1338 80.3347 25.7309 83.5849 30.0101C85.9175 33.0812 87.7997 36.4603 89.1811 40.0449C90.083 42.3848 92.5421 43.8472 94.9676 43.21Z"
-                  fill="currentFill"
-                />
-              </svg> */}
               <span className="sr-only">Loading...</span>
             </div>
             <span
               className={
-                chatEndpointIsLoading || intermediateStepsLoading
-                  ? "hidden"
-                  : ""
+                chatEndpointIsLoading || intermediateStepsLoading ? "hidden" : ""
               }
             >
               Send
