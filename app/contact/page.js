@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/header/Navbar";
 import Footer from "@/components/footer/Footer";
-import Contact from "@/components/contact/contact";
+import Contact from "@/components/contact/Contact";
 
 
 export default function Page() {
