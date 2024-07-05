@@ -28,9 +28,9 @@ const ChatbotIcon = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed bottom-20 right-4 w-96 h-[600px] bg-white border border-gray-300 shadow-lg rounded-lg flex flex-col z-50">
+        <div className="fixed bottom-20 right-4 w-96 h-[600px] bg-[#fcf0d5] shadow-2xl rounded-lg flex flex-col z-50">
           <div className="flex justify-between items-center p-2 border-b border-gray-300">
-            <h2 className="text-lg font-bold">Ittsy Chatbot</h2>
+            <h2 className="text-lg font-bold text-[#0c1f1e]">Message Us</h2>
             <button className="text-gray-500" onClick={handleToggle}>
               ✕
             </button>
@@ -38,9 +38,9 @@ const ChatbotIcon = () => {
           <div className="flex-1 p-2 overflow-y-auto">
             <ChatWindow
               endpoint="api/chat/retrieval_agents"
-              titleText="Ittsy Chatbot"
+              titleText="Ittsy AI"
               placeholder="How can I help you?"
-              emptyStateComponent={InfoCard}
+            //   emptyStateComponent={InfoCard}
               showIngestForm={false} // Ensure the upload form is visible
             />
           </div>

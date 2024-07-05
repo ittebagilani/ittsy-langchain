@@ -1,11 +1,10 @@
-import { ChatWindow } from "@/components/ChatWindow";
 import Navbar from "@/components/Header/Navbar"
 import Hero from "@/components/Home/Hero";
 import Services from "@/components/Home/Services";
 import Promise from "@/components/Home/Promise";
 import Talk from "@/components/Home/Talk";
 import Footer from "@/components/Footer/Footer";
-import ChatbotIcon from "@/components/ChatbotIcon";
+
 
 
 export default function Home() {
@@ -26,7 +25,7 @@ export default function Home() {
       <Promise />
       <Talk />
       <Footer />
-      <ChatbotIcon />
+
     </main>
   );
 }

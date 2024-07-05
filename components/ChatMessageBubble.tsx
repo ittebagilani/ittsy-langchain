@@ -2,7 +2,7 @@ import type { Message } from "ai/react";
 
 export function ChatMessageBubble(props: { message: Message, aiEmoji?: string, sources: any[] }) {
   const colorClassName =
-    props.message.role === "user" ? "bg-sky-600" : "bg-slate-50 text-black";
+    props.message.role === "user" ? "bg-blue-500" : "bg-blue-400 text-white";
   const alignmentClassName =
     props.message.role === "user" ? "ml-auto" : "mr-auto";
   // const prefix = props.message.role === "user" ? "🧑" : props.aiEmoji;
@@ -15,7 +15,7 @@ export function ChatMessageBubble(props: { message: Message, aiEmoji?: string, s
       </div> */}
       <div className="whitespace-pre-wrap flex flex-col">
         <span>{props.message.content}</span>
-        {props.sources && props.sources.length ? <>
+        {/* {props.sources && props.sources.length ? <>
           <code className="mt-4 mr-auto bg-slate-600 px-2 py-1 rounded">
             <h2>
               🔍 Sources:
@@ -32,7 +32,7 @@ export function ChatMessageBubble(props: { message: Message, aiEmoji?: string, s
               </div>
             ))}
           </code>
-        </> : ""}
+        </> : ""} */}
       </div>
     </div>
   );

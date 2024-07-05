@@ -166,4 +166,10 @@ We may use third-party services that use cookies to provide analytics, advertisi
 Changes to the Cookie Policy
 We reserve the right to update this Cookie Policy to reflect changes in our cookie practices or legal requirements. We recommend checking this page periodically for any updates.
 Contact Us
-If you have any questions or concerns about our Cookie Policy, please contact us at info@ittsy.co`
+If you have any questions or concerns about our Cookie Policy, please contact us at info@ittsy.co
+
+
+
+Contact US
+You can contact us at info@ittsy.co or use our contact form below to get in touch with us. We will respond to your inquiry as soon as possible.
+`

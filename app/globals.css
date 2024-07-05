@@ -31,3 +31,20 @@ code {
 li {
   padding: 4px;
 }
+
+/* Add this to your global CSS file */
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  z-index: 1000;
+  border: 1px solid #ccc;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
