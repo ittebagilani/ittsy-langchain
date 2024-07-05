@@ -21,7 +21,7 @@ const ChatbotIcon = () => {
   return (
     <>
       <div
-        className="fixed bottom-4 right-4 bg-blue-500 p-3 rounded-full shadow-lg cursor-pointer z-50"
+        className="fixed bottom-4 right-4 bg-[#bdf4c8] p-3 rounded-full shadow-lg cursor-pointer z-50"
         onClick={handleToggle}
       >
         <img src="/chatbot-icon.png" alt="Chatbot Icon" className="w-10 h-10" />
