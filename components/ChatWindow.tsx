@@ -182,20 +182,12 @@ export function ChatWindow({
   }, [messages]);
 
   return (
-    <div
-      className={`flex flex-col h-full p-4 md:p-2 bg-[#fcf0d5] rounded grow overflow-hidden ${
-        messages.length > 0 ? "border" : ""
-      }`}
-    >
-      <h2
-        className={`${
-          messages.length > 0 ? "" : "hidden"
-        } text-2xl text-[#122f2d] font-black text-center py-2`}
-      >
+    <div className="flex flex-col h-full p-4 md:p-2 bg-[#fcf0d5] rounded grow overflow-hidden border md:border-none">
+      <h2 className="text-2xl text-[#122f2d] font-black text-center py-2 hidden md:block">
         {emoji} {titleText}
       </h2>
       <div
-        className="flex flex-col w-full mb-4 overflow-auto transition-[flex-grow] ease-in-out"
+        className="flex flex-col w-full mb-4 overflow-auto transition-[flex-grow] ease-in-out grow"
         ref={messageContainerRef}
       >
         {messages.length > 0 &&
@@ -217,18 +209,18 @@ export function ChatWindow({
 
       {messages.length === 0 && ingestForm}
 
-      <form onSubmit={sendMessage} className="flex flex-col w-full mt-auto">
-        <div className="flex">{intermediateStepsToggle}</div>
-        <div className="flex w-full mt-4">
+      <form onSubmit={sendMessage} className="flex flex-col w-full mt-auto space-y-4">
+        {intermediateStepsToggle}
+        <div className="flex w-full mt-4 space-x-2">
           <input
-            className="ml-1 mr-2 px-2 py-4 rounded text-white"
+            className="flex-grow px-2 py-4 rounded text-white"
             value={input}
             placeholder={placeholder ?? "What services does Ittsy offer?"}
             onChange={handleInputChange}
           />
           <button
             type="submit"
-            className="shrink-0 py-4 bg-[#122f2d] rounded w-fit px-10"
+            className="py-4 bg-[#122f2d] rounded w-full md:w-auto px-4 md:px-10 flex justify-center items-center"
           >
             <div role="status" className={`${(chatEndpointIsLoading || intermediateStepsLoading) ? "" : "hidden"} flex justify-center w-fit px-2`}>
               <svg aria-hidden="true" className="w-6 h-6 text-white animate-spin dark:text-white fill-sky-800" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -251,3 +243,4 @@ export function ChatWindow({
     </div>
   );
 }
+
