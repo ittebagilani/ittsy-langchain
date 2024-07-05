@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import React from "react";
 import { ChatWindow } from "@/components/ChatWindow"; // Ensure the correct path
+import ChatbotIcon from "@/components/ChatbotIcon";
 
 const poppins = Poppins({ subsets: ["latin"], weight: "400" });
 
@@ -21,14 +22,7 @@ export default function RootLayout({
         {children}
         <Analytics />
         <div className="chatbot-container">
-          <ChatWindow
-            endpoint="/api/chat" // Update this endpoint to your chat API endpoint
-            placeholder="Type your message..."
-            titleText="Itsty Chatbot"
-            emoji="🤖"
-            showIngestForm={true}
-            showIntermediateStepsToggle={true}
-          />
+          <ChatbotIcon />
         </div>
       </body>
     </html>
