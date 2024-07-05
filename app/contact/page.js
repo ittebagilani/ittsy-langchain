@@ -1,7 +1,7 @@
 "use client";
 
-import Navbar from "@/components/Header/Navbar";
-import Footer from "@/components/Footer/Footer";
+import Navbar from "@/components/header/Navbar";
+import Footer from "@/components/footer/Footer";
 import Contact from "@/components/contact/contact";
 
 
