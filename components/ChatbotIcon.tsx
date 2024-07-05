@@ -29,13 +29,13 @@ const ChatbotIcon = () => {
 
       {isOpen && (
         <div className="fixed bottom-20 right-4 md:w-[25%] h-[70%] w-[70%] bg-[#fcf0d5] shadow-2xl rounded-lg flex flex-col z-50">
-          <div className="flex justify-between items-center p-2 border-b border-gray-300">
+          <div className="flex justify-between items-center p-1 border-b border-gray-300">
             <h2 className="text-lg font-bold text-[#0c1f1e]">Ittsy Agent</h2>
             <button className="text-gray-500" onClick={handleToggle}>
               ✕
             </button>
           </div>
-          <div className="flex-1 p-2 overflow-y-auto">
+          <div className="flex-1 p-1 overflow-y-auto">
             <ChatWindow
               endpoint="api/chat/retrieval_agents"
               titleText=""
