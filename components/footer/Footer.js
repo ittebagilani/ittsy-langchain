@@ -16,7 +16,7 @@ export default function Footer() {
             <p>
               Ittsy Systems.
               <br />
-              Copyright 2024.
+              © 2024.
             </p>
           </aside>
           <nav>
@@ -73,7 +73,7 @@ export default function Footer() {
             </Link>
             <Link
               className="link link-hover ml-8 mt-2"
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/ittsy/"
               target="_blank"
               rel="noopener noreferrer"
             >
