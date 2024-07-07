@@ -1,7 +1,10 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
-import { ChatWindow } from "@/components/ChatWindow";
+// import { ChatWindow } from "@/components/ChatWindow";
+import { useChat } from "ai/react";
+import { ChatInput, ChatMessages } from "./ui/chat";
+import { useClientConfig } from "./ui/chat/hooks/use-config";
 
 const ChatbotIcon = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,13 +13,28 @@ const ChatbotIcon = () => {
     setIsOpen(!isOpen);
   };
 
-  const InfoCard = (
-    <div className="p-4 md:p-8 rounded bg-[#25252d] w-full max-h-[85%] overflow-hidden">
-      <h1 className="text-3xl md:text-4xl mb-4">
-        Ittsy Chatbot
-      </h1>
-    </div>
-  );
+  const { chatAPI } = useClientConfig();
+  const {
+    messages,
+    input,
+    isLoading,
+    handleSubmit,
+    handleInputChange,
+    reload,
+    stop,
+    append,
+    setInput,
+  } = useChat({
+    api: chatAPI,
+    headers: {
+      "Content-Type": "application/json", // using JSON because of vercel/ai 2.2.26
+    },
+    onError: (error: unknown) => {
+      if (!(error instanceof Error)) throw error;
+      const message = JSON.parse(error.message);
+      alert(message.detail);
+    },
+  });
 
   return (
     <>
@@ -28,20 +46,33 @@ const ChatbotIcon = () => {
       </div>
 
       {isOpen && (
-        <div className="fixed bottom-20 right-4 md:w-[25%] h-[70%] w-[70%] bg-[#122f2d] shadow-2xl rounded-lg flex flex-col z-50">
+        <div className="fixed bottom-20 right-4 md:w-[25%] w-[70%] h-[70%] bg-[#122f2d] shadow-2xl rounded-lg flex flex-col z-50">
           <div className="flex justify-between items-center px-2 py-1">
-            <h2 className="text-2xl font-normal ml-2 text-[#fcf0d5]">Ittsy Agent</h2>
+            <h2 className="text-2xl font-normal ml-2 text-[#fcf0d5]">
+              Ittsy Agent
+            </h2>
             <button className="text-gray-500" onClick={handleToggle}>
               ✕
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto">
-            <ChatWindow
-              endpoint="api/chat/retrieval_agents"
-              titleText=""
-              placeholder="How can I help?"
-            //   emptyStateComponent={InfoCard}
-              showIngestForm={false} // Ensure the upload form is visible
+          <div className="flex-1 bg-[#fdf6ee] p-4 overflow-y-auto">
+            <ChatMessages
+              messages={messages}
+              isLoading={isLoading}
+              reload={reload}
+              stop={stop}
+              append={append}
+            />
+          </div>
+          <div className="bg-[#122f2d] rounded-lg">
+            <ChatInput
+              input={input}
+              handleSubmit={handleSubmit}
+              handleInputChange={handleInputChange}
+              isLoading={isLoading}
+              messages={messages}
+              append={append}
+              setInput={setInput}
             />
           </div>
         </div>

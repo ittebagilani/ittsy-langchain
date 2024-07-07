@@ -3,7 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import React from "react";
-import { ChatWindow } from "@/components/ChatWindow"; // Ensure the correct path
+// import { ChatWindow } from "@/components/ChatWindow"; // Ensure the correct path
 import ChatbotIcon from "@/components/ChatbotIcon";
 
 const poppins = Poppins({ subsets: ["latin"], weight: "400" });

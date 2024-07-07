@@ -1,73 +1,86 @@
+import { initObservability } from "@/app/observability";
+import { Message, StreamData, StreamingTextResponse } from "ai";
+import { ChatMessage, Settings } from "llamaindex";
 import { NextRequest, NextResponse } from "next/server";
-import { Message as VercelChatMessage, StreamingTextResponse } from "ai";
+import { createChatEngine } from "./engine/chat";
+import { initSettings } from "./engine/settings";
+import { LlamaIndexStream, convertMessageContent } from "./llamaindex-stream";
+import { createCallbackManager, createStreamTimeout } from "./stream-helper";
 
-import { ChatOpenAI } from "@langchain/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { HttpResponseOutputParser } from "langchain/output_parsers";
+initObservability();
+initSettings();
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-const formatMessage = (message: VercelChatMessage) => {
-  return `${message.role}: ${message.content}`;
-};
+export async function POST(request: NextRequest) {
+  // Init Vercel AI StreamData and timeout
+  const vercelStreamData = new StreamData();
+  const streamTimeout = createStreamTimeout(vercelStreamData);
 
-const TEMPLATE = `You are a pirate named Patchy. All responses must be extremely verbose and in pirate dialect.
-
-Current conversation:
-{chat_history}
-
-User: {input}
-AI:`;
-
-/**
- * This handler initializes and calls a simple chain with a prompt,
- * chat model, and output parser. See the docs for more information:
- *
- * https://js.langchain.com/docs/guides/expression_language/cookbook#prompttemplate--llm--outputparser
- */
-export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const messages = body.messages ?? [];
-    const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
-    const currentMessageContent = messages[messages.length - 1].content;
-    const prompt = PromptTemplate.fromTemplate(TEMPLATE);
+    const body = await request.json();
+    const { messages }: { messages: Message[] } = body;
+    const userMessage = messages.pop();
+    if (!messages || !userMessage || userMessage.role !== "user") {
+      return NextResponse.json(
+        {
+          error:
+            "messages are required in the request body and the last message must be from the user",
+        },
+        { status: 400 },
+      );
+    }
 
-    /**
-     * You can also try e.g.:
-     *
-     * import { ChatAnthropic } from "@langchain/anthropic";
-     * const model = new ChatAnthropic({});
-     *
-     * See a full list of supported models at:
-     * https://js.langchain.com/docs/modules/model_io/models/
-     */
-    const model = new ChatOpenAI({
-      temperature: 0.0,
-      model: "gpt-3.5-turbo",
+    const chatEngine = await createChatEngine();
+
+    let annotations = userMessage.annotations;
+    if (!annotations) {
+      // the user didn't send any new annotations with the last message
+      // so use the annotations from the last user message that has annotations
+      // REASON: GPT4 doesn't consider MessageContentDetail from previous messages, only strings
+      annotations = messages
+        .slice()
+        .reverse()
+        .find(
+          (message) => message.role === "user" && message.annotations,
+        )?.annotations;
+    }
+
+    // Convert message content from Vercel/AI format to LlamaIndex/OpenAI format
+    const userMessageContent = convertMessageContent(
+      userMessage.content,
+      annotations,
+    );
+
+    // Setup callbacks
+    const callbackManager = createCallbackManager(vercelStreamData);
+
+    // Calling LlamaIndex's ChatEngine to get a streamed response
+    const response = await Settings.withCallbackManager(callbackManager, () => {
+      return chatEngine.chat({
+        message: userMessageContent,
+        chatHistory: messages as ChatMessage[],
+        stream: true,
+      });
     });
 
-    /**
-     * Chat models stream message chunks rather than bytes, so this
-     * output parser handles serialization and byte-encoding.
-     */
-    const outputParser = new HttpResponseOutputParser();
+    // Transform LlamaIndex stream to Vercel/AI format
+    const stream = LlamaIndexStream(response, vercelStreamData);
 
-    /**
-     * Can also initialize as:
-     *
-     * import { RunnableSequence } from "@langchain/core/runnables";
-     * const chain = RunnableSequence.from([prompt, model, outputParser]);
-     */
-    const chain = prompt.pipe(model).pipe(outputParser);
-
-    const stream = await chain.stream({
-      chat_history: formattedPreviousMessages.join("\n"),
-      input: currentMessageContent,
-    });
-
-    return new StreamingTextResponse(stream);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: e.status ?? 500 });
+    // Return a StreamingTextResponse, which can be consumed by the Vercel/AI client
+    return new StreamingTextResponse(stream, {}, vercelStreamData);
+  } catch (error) {
+    console.error("[LlamaIndex]", error);
+    return NextResponse.json(
+      {
+        detail: (error as Error).message,
+      },
+      {
+        status: 500,
+      },
+    );
+  } finally {
+    clearTimeout(streamTimeout);
   }
 }
