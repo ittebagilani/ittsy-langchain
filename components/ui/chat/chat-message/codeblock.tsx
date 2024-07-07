@@ -2,7 +2,9 @@
 
 "use client";
 
-import { Check, Copy, Download } from "lucide-react";
+// import { Check, Copy } from "lucide-react";
+import { FaCheck } from "react-icons/fa6";
+import { GoCopy } from "react-icons/go";
 import { FC, memo } from "react";
 import { Prism, SyntaxHighlighterProps } from "react-syntax-highlighter";
 import { coldarkDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
@@ -99,15 +101,15 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
       <div className="flex w-full items-center justify-between bg-zinc-800 px-6 py-2 pr-4 text-zinc-100">
         <span className="text-xs lowercase">{language}</span>
         <div className="flex items-center space-x-1">
-          <Button variant="ghost" onClick={downloadAsFile} size="icon">
+          {/* <Button variant="ghost" onClick={downloadAsFile} size="icon">
             <Download />
             <span className="sr-only">Download</span>
-          </Button>
+          </Button> */}
           <Button variant="ghost" size="icon" onClick={onCopy}>
             {isCopied ? (
-              <Check className="h-4 w-4" />
+              <FaCheck className="h-4 w-4" />
             ) : (
-              <Copy className="h-4 w-4" />
+              <GoCopy className="h-4 w-4" />
             )}
             <span className="sr-only">Copy code</span>
           </Button>
