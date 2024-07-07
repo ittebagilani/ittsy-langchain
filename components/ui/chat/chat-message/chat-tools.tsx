@@ -1,7 +1,6 @@
 // USELESS FILE
 
 import { ToolData } from "../index";
-import { WeatherCard, WeatherData } from "../widgets/WeatherCard";
 
 // TODO: If needed, add displaying more tool outputs here
 export default function ChatTools({ data }: { data: ToolData }) {
@@ -18,11 +17,5 @@ export default function ChatTools({ data }: { data: ToolData }) {
     );
   }
 
-  switch (toolCall.name) {
-    case "get_weather_information":
-      const weatherData = toolOutput.output as unknown as WeatherData;
-      return <WeatherCard data={weatherData} />;
-    default:
-      return null;
-  }
+  return null;
 }
