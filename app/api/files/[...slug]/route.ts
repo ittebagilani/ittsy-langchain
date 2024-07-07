@@ -2,39 +2,38 @@ import { readFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 
-/**
- * This API is to get file data from allowed folders
- * It receives path slug and response file data like serve static file
- */
+const allowedFolders = ["data", "tool-output"];
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: { slug: string[] } },
 ) {
-  const slug = params.slug;
+  const { slug } = params;
 
   if (!slug) {
     return NextResponse.json({ detail: "Missing file slug" }, { status: 400 });
   }
 
-  if (slug.includes("..") || path.isAbsolute(path.join(...slug))) {
+  const filePath = path.join(...slug);
+
+  if (slug.includes("..") || path.isAbsolute(filePath)) {
     return NextResponse.json({ detail: "Invalid file path" }, { status: 400 });
   }
 
-  const [folder, ...pathTofile] = params.slug; // data, file.pdf
-  const allowedFolders = ["data", "tool-output"];
+  const [folder, ...pathToFile] = slug;
 
   if (!allowedFolders.includes(folder)) {
     return NextResponse.json({ detail: "No permission" }, { status: 400 });
   }
 
   try {
-    const filePath = path.join(process.cwd(), folder, path.join(...pathTofile));
-    const blob = await readFile(filePath);
+    const fullPath = path.join(process.cwd(), folder, ...pathToFile);
+    const blob = await readFile(fullPath);
 
     return new NextResponse(blob, {
       status: 200,
-      statusText: "OK",
       headers: {
+        "Content-Type": "application/octet-stream",
         "Content-Length": blob.byteLength.toString(),
       },
     });
