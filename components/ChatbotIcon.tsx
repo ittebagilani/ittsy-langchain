@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useChat } from "ai/react";
 import { ChatInput, ChatMessages } from "./ui/chat";
 import { useClientConfig } from "./ui/chat/hooks/use-config";
+import Image from "next/image";
 
 const ChatbotIcon = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +43,7 @@ const ChatbotIcon = () => {
         className="fixed bottom-4 right-4 bg-[#bdf4c8] p-3 rounded-full shadow-lg cursor-pointer z-50"
         onClick={handleToggle}
       >
-        <img src="/chatbot-icon.png" alt="Chatbot Icon" className="w-10 h-10" />
+        <Image src="/chatbot-icon.png" alt="Chatbot Icon" width={40} height={40} />
       </div>
 
       {isOpen && (
