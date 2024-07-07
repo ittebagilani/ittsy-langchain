@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { LuLoader2 } from "react-icons/lu";
 import { useEffect, useRef } from "react";
 
 import { Button } from "../button";
@@ -58,7 +58,7 @@ export default function ChatMessages(
         })}
         {isPending && (
           <div className="flex justify-center items-center pt-10">
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <LuLoader2 className="h-4 w-4 animate-spin" />
           </div>
         )}
       </div>
