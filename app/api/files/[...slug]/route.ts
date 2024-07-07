@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
+import { join } from "path";
 
 const allowedFolders = ["data", "tool-output"];
 
@@ -14,9 +14,9 @@ export async function GET(
     return NextResponse.json({ detail: "Missing file slug" }, { status: 400 });
   }
 
-  const filePath = path.join(...slug);
+  const filePath = join(...slug);
 
-  if (slug.includes("..") || path.isAbsolute(filePath)) {
+  if (slug.includes("..") || join(...slug) !== filePath) {
     return NextResponse.json({ detail: "Invalid file path" }, { status: 400 });
   }
 
@@ -27,7 +27,7 @@ export async function GET(
   }
 
   try {
-    const fullPath = path.join(process.cwd(), folder, ...pathToFile);
+    const fullPath = join(process.cwd(), folder, ...pathToFile);
     const blob = await readFile(fullPath);
 
     return new NextResponse(blob, {
