@@ -1,4 +1,8 @@
 import { ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { FaChevronDown } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
+import { LuLoader2 } from "react-icons/lu";
+
 import { useState } from "react";
 import { Button } from "../../button";
 import {
@@ -20,9 +24,9 @@ export function ChatEvents({
   const buttonLabel = isOpen ? "Hide events" : "Show events";
 
   const EventIcon = isOpen ? (
-    <ChevronDown className="h-4 w-4" />
+    <FaChevronDown className="h-4 w-4" />
   ) : (
-    <ChevronRight className="h-4 w-4" />
+    <FaChevronRight className="h-4 w-4" />
   );
 
   return (
@@ -30,7 +34,7 @@ export function ChatEvents({
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <Button variant="secondary" className="space-x-2">
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {isLoading ? <LuLoader2 className="h-4 w-4 animate-spin" /> : null}
             <span>{buttonLabel}</span>
             {EventIcon}
           </Button>
