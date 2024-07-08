@@ -8,7 +8,7 @@ export interface ChatConfig {
 }
 
 export function useClientConfig() {
-  const API_ROUTE = "/api/chat/config";
+  const API_ROUTE = "/api/chat";
   const chatAPI = process.env.NEXT_PUBLIC_CHAT_API;
   const [config, setConfig] = useState<ChatConfig>({
     chatAPI,
