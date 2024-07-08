@@ -20,11 +20,13 @@ export async function POST(request: NextRequest) {
 
   try {
     console.log("Request received");
+
     const body = await request.json();
     console.log("Request body:", body);
 
     const { messages }: { messages: Message[] } = body;
     const userMessage = messages.pop();
+
     if (!messages || !userMessage || userMessage.role !== "user") {
       console.error("Invalid request body");
       return NextResponse.json(
@@ -77,7 +79,16 @@ export async function POST(request: NextRequest) {
     // Return a StreamingTextResponse, which can be consumed by the Vercel/AI client
     return new StreamingTextResponse(stream, {}, vercelStreamData);
   } catch (error) {
-    console.error("[LlamaIndex]", error);
+    console.error("[LlamaIndex] Error:", error);
+
+    // Log full error details including stack trace
+    if (error instanceof Error) {
+      console.error("[LlamaIndex] Error message:", error.message);
+      console.error("[LlamaIndex] Error stack:", error.stack);
+    } else {
+      console.error("[LlamaIndex] Unknown error type:", error);
+    }
+
     return NextResponse.json(
       {
         detail: (error as Error).message,
