@@ -10,9 +10,6 @@
     "format": "prettier --write \"app\"",
     "generate": "tsx app\\api\\chat\\engine\\generate.ts"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "@e2b/code-interpreter": "^0.0.5",
