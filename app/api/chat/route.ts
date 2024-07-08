@@ -19,10 +19,14 @@ export async function POST(request: NextRequest) {
   const streamTimeout = createStreamTimeout(vercelStreamData);
 
   try {
+    console.log("Request received");
     const body = await request.json();
+    console.log("Request body:", body);
+
     const { messages }: { messages: Message[] } = body;
     const userMessage = messages.pop();
     if (!messages || !userMessage || userMessage.role !== "user") {
+      console.error("Invalid request body");
       return NextResponse.json(
         {
           error:
@@ -33,12 +37,10 @@ export async function POST(request: NextRequest) {
     }
 
     const chatEngine = await createChatEngine();
+    console.log("Chat engine created");
 
     let annotations = userMessage.annotations;
     if (!annotations) {
-      // the user didn't send any new annotations with the last message
-      // so use the annotations from the last user message that has annotations
-      // REASON: GPT4 doesn't consider MessageContentDetail from previous messages, only strings
       annotations = messages
         .slice()
         .reverse()
@@ -52,9 +54,11 @@ export async function POST(request: NextRequest) {
       userMessage.content,
       annotations,
     );
+    console.log("User message content converted:", userMessageContent);
 
     // Setup callbacks
     const callbackManager = createCallbackManager(vercelStreamData);
+    console.log("Callback manager created");
 
     // Calling LlamaIndex's ChatEngine to get a streamed response
     const response = await Settings.withCallbackManager(callbackManager, () => {
@@ -64,9 +68,11 @@ export async function POST(request: NextRequest) {
         stream: true,
       });
     });
+    console.log("Response received from chat engine");
 
     // Transform LlamaIndex stream to Vercel/AI format
     const stream = LlamaIndexStream(response, vercelStreamData);
+    console.log("Stream transformed");
 
     // Return a StreamingTextResponse, which can be consumed by the Vercel/AI client
     return new StreamingTextResponse(stream, {}, vercelStreamData);
