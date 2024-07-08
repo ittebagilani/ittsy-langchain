@@ -7,10 +7,10 @@ const nextConfig = {
           './.next/trace/**',
         ],
       },
-      // serverComponentsExternalPackages: [
-      //   'sharp',
-      //   'onnxruntime-node',
-      // ],
+      serverComponentsExternalPackages: [
+        'sharp',
+        'onnxruntime-node',
+      ],
     },
     // webpack: (config) => {
     //   // Ignore node-specific modules when bundling for the browser
