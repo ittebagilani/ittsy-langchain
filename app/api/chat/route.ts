@@ -14,6 +14,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
+  // Init Vercel AI StreamData and timeout
   const vercelStreamData = new StreamData();
   const streamTimeout = createStreamTimeout(vercelStreamData);
 
@@ -24,9 +25,10 @@ export async function POST(request: NextRequest) {
     if (!messages || !userMessage || userMessage.role !== "user") {
       return NextResponse.json(
         {
-          error: "messages are required in the request body and the last message must be from the user",
+          error:
+            "messages are required in the request body and the last message must be from the user",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,16 +36,27 @@ export async function POST(request: NextRequest) {
 
     let annotations = userMessage.annotations;
     if (!annotations) {
+      // the user didn't send any new annotations with the last message
+      // so use the annotations from the last user message that has annotations
+      // REASON: GPT4 doesn't consider MessageContentDetail from previous messages, only strings
       annotations = messages
         .slice()
         .reverse()
-        .find((message) => message.role === "user" && message.annotations)?.annotations;
+        .find(
+          (message) => message.role === "user" && message.annotations,
+        )?.annotations;
     }
 
-    const userMessageContent = convertMessageContent(userMessage.content, annotations);
+    // Convert message content from Vercel/AI format to LlamaIndex/OpenAI format
+    const userMessageContent = convertMessageContent(
+      userMessage.content,
+      annotations,
+    );
 
+    // Setup callbacks
     const callbackManager = createCallbackManager(vercelStreamData);
 
+    // Calling LlamaIndex's ChatEngine to get a streamed response
     const response = await Settings.withCallbackManager(callbackManager, () => {
       return chatEngine.chat({
         message: userMessageContent,
@@ -52,26 +65,20 @@ export async function POST(request: NextRequest) {
       });
     });
 
+    // Transform LlamaIndex stream to Vercel/AI format
     const stream = LlamaIndexStream(response, vercelStreamData);
 
+    // Return a StreamingTextResponse, which can be consumed by the Vercel/AI client
     return new StreamingTextResponse(stream, {}, vercelStreamData);
   } catch (error) {
-    console.error("[LlamaIndex] Error:", error);
-
-    if (error instanceof Error) {
-      console.error("[LlamaIndex] Error message:", error.message);
-      console.error("[LlamaIndex] Error stack:", error.stack);
-    } else {
-      console.error("[LlamaIndex] Unknown error type:", error);
-    }
-
+    console.error("[LlamaIndex]", error);
     return NextResponse.json(
       {
         detail: (error as Error).message,
       },
       {
         status: 500,
-      }
+      },
     );
   } finally {
     clearTimeout(streamTimeout);
