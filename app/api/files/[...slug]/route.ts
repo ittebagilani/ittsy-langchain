@@ -12,30 +12,29 @@ export async function GET(
 ) {
   const slug = params.slug;
 
-  // Check if the slug is provided
   if (!slug) {
+    console.error("Missing file slug");
     return NextResponse.json({ detail: "Missing file slug" }, { status: 400 });
   }
 
-  // Validate the path to prevent directory traversal
   if (slug.includes("..") || path.isAbsolute(path.join(...slug))) {
+    console.error("Invalid file path:", slug);
     return NextResponse.json({ detail: "Invalid file path" }, { status: 400 });
   }
 
-  const [folder, ...pathToFile] = params.slug; // e.g., 'data', 'file.pdf'
+  const [folder, ...pathToFile] = slug; // e.g., 'data', 'file.pdf'
   const allowedFolders = ["data", "tool-output"];
 
-  // Check if the folder is allowed
   if (!allowedFolders.includes(folder)) {
+    console.error("No permission to access folder:", folder);
     return NextResponse.json({ detail: "No permission" }, { status: 400 });
   }
 
   try {
-    // Construct the file path
-    const filePath = path.join(process.cwd(), folder, path.join(...pathToFile));
+    // Construct the file path in the public directory
+    const filePath = path.join(process.cwd(), 'public', folder, path.join(...pathToFile));
     const blob = await readFile(filePath);
 
-    // Return the file content
     return new NextResponse(blob, {
       status: 200,
       statusText: "OK",
@@ -44,7 +43,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("File not found or error reading file:", error);
     return NextResponse.json({ detail: "File not found" }, { status: 404 });
   }
 }
