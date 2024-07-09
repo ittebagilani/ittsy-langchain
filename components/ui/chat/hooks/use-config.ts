@@ -16,7 +16,7 @@ export function useClientConfig() {
 
   const configAPI = useMemo(() => {
     const backendOrigin = chatAPI ? new URL(chatAPI).origin : "";
-    return `${backendOrigin}${API_ROUTE}`;
+    return `${API_ROUTE}`;
   }, [chatAPI]);
 
   useEffect(() => {
