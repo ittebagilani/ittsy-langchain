@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 import CopyWebpackPlugin from "copy-webpack-plugin";
 
-
 const nextConfig = {
+  output: 'standalone',
   experimental: {
     outputFileTracingExcludes: {
       '**/*': [
@@ -32,23 +32,10 @@ const nextConfig = {
           },
         ],
       })
-    )
+    );
 
     return config;
   },
 };
 
 export default nextConfig;
-
-
-
-  
-  // webpack: (config) => {
-  //   // Ignore node-specific modules when bundling for the browser
-  //   config.resolve.alias = {
-  //     ...config.resolve.alias,
-  //     'sharp$': false,
-  //     'onnxruntime-node$': false,
-  //   };
-  //   return config;
-  // },
