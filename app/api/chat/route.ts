@@ -86,10 +86,3 @@ export async function POST(request: NextRequest) {
     clearTimeout(streamTimeout);
   }
 }
-
-export async function GET(request: NextRequest) {
-  return NextResponse.json({
-    chatAPI: process.env.NEXT_PUBLIC_CHAT_API,
-    starterQuestions: ["How can I help you?", "Tell me more about it."],
-  });
-}
