@@ -32,7 +32,12 @@ const ChatbotIcon = () => {
     },
     onError: (error: unknown) => {
       if (!(error instanceof Error)) throw error;
-      const message = JSON.parse(error.message);
+      let message;
+      try {
+        message = JSON.parse(error.message);
+      } catch {
+        message = { detail: error.message };
+      }
       alert(message.detail);
     },
   });
