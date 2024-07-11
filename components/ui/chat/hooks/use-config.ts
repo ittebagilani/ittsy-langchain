@@ -15,28 +15,14 @@ export function useClientConfig() {
   });
 
   const configAPI = useMemo(() => {
-    if (!chatAPI) {
-      console.error("Chat API is not defined");
-      return API_ROUTE;
-    }
-
-    try {
-      const backendOrigin = new URL(chatAPI).origin;
-      return `${backendOrigin}${API_ROUTE}`;
-    } catch (error) {
-      console.error("Invalid chatAPI URL:", error);
-      return API_ROUTE;
-    }
+    const backendOrigin = chatAPI ? new URL(chatAPI).origin : "";
+    return `${API_ROUTE}`;
   }, [chatAPI]);
 
   useEffect(() => {
-    console.log("Fetching config from:", configAPI); // Logging for debugging
     fetch(configAPI)
       .then((response) => response.json())
-      .then((data) => {
-        console.log("Config data:", data); // Logging for debugging
-        setConfig({ ...data, chatAPI });
-      })
+      .then((data) => setConfig({ ...data, chatAPI }))
       .catch((error) => console.error("Error fetching config", error));
   }, [chatAPI, configAPI]);
 
