@@ -1,5 +1,5 @@
 import { ContextChatEngine, Settings } from "llamaindex";
-import { getDataSource } from "./index";
+import { getDataSource } from "../../index";
 
 export async function createChatEngine() {
   const index = await getDataSource();

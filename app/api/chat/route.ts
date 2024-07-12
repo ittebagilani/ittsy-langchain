@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { initObservability } from "@/app/observability";
 import { Message, StreamData, StreamingTextResponse } from "ai";
 import { ChatMessage, Settings } from "llamaindex";
 import { createChatEngine } from "./engine/chat";
+import { initSettings } from "./engine/settings";
 import { LlamaIndexStream, convertMessageContent } from "./llamaindex-stream";
 import { createCallbackManager, createStreamTimeout } from "./stream-helper";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
+initObservability();
+initSettings();
+
+export const runtime = "nodejs";
+// export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const vercelStreamData = new StreamData();
