@@ -18,47 +18,30 @@ export async function POST(request: NextRequest) {
   const streamTimeout = createStreamTimeout(vercelStreamData);
 
   try {
-    const body = await request.json();
-    const { messages }: { messages: Message[] } = body;
+    const { messages }: { messages: Message[] } = await request.json();
     const userMessage = messages.pop();
     if (!messages || !userMessage || userMessage.role !== "user") {
       return NextResponse.json(
-        {
-          error: "messages are required in the request body and the last message must be from the user",
-        },
+        { error: "messages are required in the request body and the last message must be from the user" },
         { status: 400 }
       );
     }
 
     const chatEngine = await createChatEngine();
-
-    let annotations = userMessage.annotations;
-    if (!annotations) {
-      annotations = messages
-        .slice()
-        .reverse()
-        .find((message) => message.role === "user" && message.annotations)
-        ?.annotations;
-    }
-
+    let annotations = userMessage.annotations || messages.reverse().find((msg) => msg.role === "user" && msg.annotations)?.annotations;
     const userMessageContent = convertMessageContent(userMessage.content, annotations);
-
     const callbackManager = createCallbackManager(vercelStreamData);
 
-    const response = await Settings.withCallbackManager(callbackManager, () => {
-      return chatEngine.chat({
-        message: userMessageContent,
-        chatHistory: messages as ChatMessage[],
-        stream: true,
-      });
-    });
+    const response = await Settings.withCallbackManager(callbackManager, () => chatEngine.chat({
+      message: userMessageContent,
+      chatHistory: messages as ChatMessage[],
+      stream: true,
+    }));
 
     const stream = LlamaIndexStream(response, vercelStreamData);
-
     const readableStream = new ReadableStream({
       async start(controller) {
         const reader = stream.getReader();
-
         async function read() {
           const { done, value } = await reader.read();
           if (done) {
@@ -68,7 +51,6 @@ export async function POST(request: NextRequest) {
           controller.enqueue(value);
           read();
         }
-
         read();
       },
     });
@@ -77,9 +59,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[LlamaIndex]", error);
     return NextResponse.json(
-      {
-        detail: (error as Error).message,
-      },
+      { detail: (error as Error).message },
       { status: 500 }
     );
   } finally {
