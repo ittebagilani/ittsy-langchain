@@ -10,7 +10,7 @@ import { createCallbackManager, createStreamTimeout } from "./stream-helper";
 initObservability();
 initSettings();
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
