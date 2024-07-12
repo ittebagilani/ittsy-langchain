@@ -23,6 +23,7 @@ export function useClientConfig() {
     try {
       const backendOrigin = new URL(chatAPI).origin;
       console.log("Backend origin:", backendOrigin); // Logging for debugging
+      console.log("API route:", API_ROUTE); // Logging for debugging
       return `${backendOrigin}${API_ROUTE}`;
       
     } catch (error) {
