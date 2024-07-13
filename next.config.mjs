@@ -22,17 +22,6 @@ const nextConfig = {
       'sharp$': false,
       'onnxruntime-node$': false,
     };
-    // Copy tiktoken_bg.wasm file
-    config.plugins.push(
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: "node_modules/tiktoken/lite/tiktoken_bg.wasm",
-            to: "static/chunks/tiktoken_bg.wasm",
-          },
-        ],
-      })
-    );
 
     return config;
   },
@@ -43,7 +32,7 @@ const nextConfig = {
             source: "/api/:path*",
             headers: [
                 { key: "Access-Control-Allow-Credentials", value: "true" },
-                { key: "Access-Control-Allow-Origin", value: "https://ittsy-llama-itteba-gs-projects.vercel.app/api/chat" }, // replace this your actual origin
+                { key: "Access-Control-Allow-Origin", value: "https://ittsy-llama-itteba-gs-projects.vercel.app/api/chat/config" }, // replace this your actual origin
                 { key: "Access-Control-Allow-Methods", value: "POST" },
                 { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
             ]
